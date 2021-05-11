@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
+import Home from './views/Home';
+import { Switch, Route } from 'react-router-dom';
+import Products from './views/Products';
 
 export default class App extends Component {
   constructor() {
+    console.log('constructed')
     super();
 
     this.state = {
@@ -12,20 +16,7 @@ export default class App extends Component {
         age: 33,
         location: 'Dallas'
       },
-      products: [
-        {
-          name: 'Cheez-Its Minis',
-          price: 1.77
-        },
-        {
-          name: 'Sour Patch Kids',
-          price: 3.59
-        },
-        {
-          name: "Albert Fruit Chews",
-          price: 9.99
-        }
-      ]
+      products: []
     }
   }
 
@@ -35,38 +26,29 @@ export default class App extends Component {
     console.log(productObj);
   }
 
+  // if you have data that you want to pass into the DOM (mainly from API call), then once complete, it fires render method again
+  componentDidMount() {
+    console.log('mounted')
+    fetch('products.json') 
+      .then(res => res.json())
+      .then(data => this.setState( { products: data } ))
+  }
+
   render() {
+    console.log('rendered')
 
     return (
       // 
       <div>
         <header>
-          <Navbar />
+          <Navbar delete={true} cart={ { total: Number(0).toFixed(2) } } />
         </header>
 
         <main className="container">
-          <h4>Hello, { this.state.user.name } ({ this.state.user.age }) from: { this.state.user.location }</h4>
-          <hr />
-          <div class="row product-deck">
-            {this.state.products.map(p => (
-              <div className="col-4">
-                <div class="card">
-                  <div className="card-header">
-                    <h6 class="card-title">
-                      { p.name }
-                    <span className="float-right">${ p.price }</span>
-                    </h6>
-                  </div>
-                  <div class="card-body">
-                    <img class="card-img-top" src="https://picsum.photos/500/500/?blur" alt={p.name} />
-                  </div>
-                  <div className="card-footer">
-                    <button onClick={(e) => this.showPrompt(e, p)} className="btn btn-info btn-block">Add to cart</button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Switch>
+            <Route exact path='/' render={ () => <Home {...this.state} /> } />
+            <Route exact path='/products' render={ () => <Products /> } />
+          </Switch>
         </main>
 
         <footer>
