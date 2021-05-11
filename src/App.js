@@ -7,47 +7,46 @@ import Products from './views/Products';
 
 export default class App extends Component {
   constructor() {
-    console.log('constructed')
     super();
 
     this.state = {
+      cart: [],
       user: {
         name: 'Derek Hawkins',
         age: 33,
         location: 'Dallas'
       },
-      products: []
+      products: [],
     }
   }
 
-  showPrompt(eventObj, productObj) {
-    console.log(eventObj);
-    alert('Hello');
-    console.log(productObj);
+  addToCart = (eventObj, productObj) => {
+    this.setState({
+      cart: this.state.cart.concat(productObj)
+    })
   }
 
   // if you have data that you want to pass into the DOM (mainly from API call), then once complete, it fires render method again
   componentDidMount() {
-    console.log('mounted')
     fetch('products.json') 
       .then(res => res.json())
       .then(data => this.setState( { products: data } ))
   }
 
   render() {
-    console.log('rendered')
 
     return (
       // 
       <div>
         <header>
-          <Navbar delete={true} cart={ { total: Number(0).toFixed(2) } } />
+          <Navbar cart={this.state.cart} />
+          {/* <Navbar delete={true} cart={ { total: Number(0).toFixed(2) } } /> */}
         </header>
 
         <main className="container">
           <Switch>
-            <Route exact path='/' render={ () => <Home {...this.state} /> } />
-            <Route exact path='/products' render={ () => <Products /> } />
+            <Route exact path='/' render={ () => <Home user={this.state.user} /> } />
+            <Route exact path='/products' render={ () => <Products addToCart={this.addToCart} products={this.state.products} /> } />
           </Switch>
         </main>
 

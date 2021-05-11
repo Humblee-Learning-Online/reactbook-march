@@ -1,0 +1,2 @@
+1. Put all of the markup for your Products on the Products View
+2. Once you do this you're going to get some errors. Figure out how to get rid of them.

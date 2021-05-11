@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 
 export default class Navbar extends Component {
     render() {
-        const cart = this.props.cart;
+        const prices = this.props.cart.map(p => p.price);
+        const subtotal = prices.reduce((sum, current) => sum + current, 0);
 
         return (
             <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
@@ -21,15 +22,19 @@ export default class Navbar extends Component {
                             <a className="nav-link" href=".">Link</a>
                         </li>
                         <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" href="." id="dropdownId" data-toggle="dropdown" aria-expanded="false">Shop</a>
+                            <a className="nav-link dropdown-toggle" href="." id="dropdownId" data-toggle="dropdown" aria-expanded="false">
+                                Shop
+                                <span style={{ marginLeft: '15px' }} className="badge badge-secondary">${subtotal.toFixed(2)}</span>
+                            </a>
                             <div className="dropdown-menu" aria-labelledby="dropdownId">
                                 <Link className="dropdown-item" to="/products">Products</Link>
-                                <a className="dropdown-item" href=".">Cart</a>
                                 <a className="dropdown-item" href=".">
-                                    Checkout
-                                    <span style={ { marginLeft: '20px' } } className="badge badge-secondary">${ cart.total }</span>
-                                    {/* <span className="float-right"></span> */}
+                                    <div>
+                                        Cart
+                                        <span className="float-right badge badge-secondary">{ this.props.cart.length }</span>
+                                    </div>
                                 </a>
+                                <a className="dropdown-item" href=".">Checkout</a>
                             </div>
                         </li>
                     </ul>
