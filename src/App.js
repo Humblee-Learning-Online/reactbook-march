@@ -1,59 +1,53 @@
-import React, { Component } from 'react';
-import './App.css';
-import Navbar from './components/Navbar';
+import React, { useEffect, useState } from 'react';
+import { Route, Switch } from 'react-router';
 import Home from './views/Home';
-import { Switch, Route } from 'react-router-dom';
 import Products from './views/Products';
 
-export default class App extends Component {
-  constructor() {
-    super();
+import './App.css';
+import { Navbar } from './components/Navbar';
 
-    this.state = {
-      cart: [],
-      user: {
-        name: 'Derek Hawkins',
-        age: 33,
-        location: 'Dallas'
-      },
-      products: [],
-    }
-  }
 
-  addToCart = (eventObj, productObj) => {
-    this.setState({
-      cart: this.state.cart.concat(productObj)
-    })
-  }
+export const App = () => {
+    const [products, setProducts] = useState([]);
+    const [user, setUser] = useState({});
+    const [cart, setCart] = useState([])
 
-  // if you have data that you want to pass into the DOM (mainly from API call), then once complete, it fires render method again
-  componentDidMount() {
-    fetch('products.json') 
-      .then(res => res.json())
-      .then(data => this.setState( { products: data } ))
-  }
+    useEffect(() => {
+        setUser({
+            name: 'Derek Hawkins',
+            age: 33,
+            location: 'Dallas'
+        });
+    }, []);
 
-  render() {
+    useEffect(() => {
+        fetch('products.json')
+            .then(res => res.json())
+            .then(data => setProducts(data))
+    }, []);
+
+    const addToCart = (eventObj, productObj) => {
+        console.log(productObj);
+        setCart([...cart, productObj])
+    };
 
     return (
-      // 
-      <div>
-        <header>
-          <Navbar cart={this.state.cart} />
-          {/* <Navbar delete={true} cart={ { total: Number(0).toFixed(2) } } /> */}
-        </header>
+        <div>
+            <header>
+                <Navbar cart={[...cart]} />
+                {/* <Navbar delete={true} cart={ { total: Number(0).toFixed(2) } } /> */}
+            </header>
 
-        <main className="container">
-          <Switch>
-            <Route exact path='/' render={ () => <Home user={this.state.user} /> } />
-            <Route exact path='/products' render={ () => <Products addToCart={this.addToCart} products={this.state.products} /> } />
-          </Switch>
-        </main>
+            <main className="container">
+                <Switch>
+                    <Route exact path='/' render={() => <Home user={{...user, something: 'hello'}} />} />
+                    <Route exact path='/products' render={() => <Products addToCart={addToCart} products={[...products]} />} />
+                </Switch>
+            </main>
 
-        <footer>
+            <footer>
 
-        </footer>
-      </div>
+            </footer>
+        </div>
     )
-  }
 }

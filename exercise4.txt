@@ -1,0 +1,3 @@
+1. You now have 3 remaining class components (1 stand-alone component, 2 views) that need to be converted into arrow function components. Do that.
+2. Once #1 is complete, make sure to make your application up-to-date with the most recent React programming principles 
+    by including React Hooks
