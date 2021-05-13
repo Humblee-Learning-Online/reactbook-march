@@ -22,7 +22,7 @@ export const Home = (props) => {
             </div>
 
             <ul className="list-group">
-                {props.posts.map(p => <Post p={p} />)}
+                {props.posts.map(p => <Post deletePost={props.deletePost} key={p.id} p={p} />)}
             </ul>
 
         </React.Fragment>

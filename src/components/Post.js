@@ -1,17 +1,19 @@
-import React from 'react'
+import React from 'react';
+import moment from 'moment';
 
 export const Post = (props) => {
     const info = props.p;
+    const date = moment(info.date).fromNow();
 
     return (
         <li className="list-group-item">
             <div>
-                <small>12-45-1012</small>
+                <small>{ date }</small>
             </div>
             <div>
                 {info.body}
                 <span className="float-right">
-                    <button className="btn btn-sm btn-danger">Delete</button>
+                    <button onClick={() => props.deletePost(info)} className="btn btn-sm btn-danger">Delete</button>
                 </span>
             </div>
             <div>

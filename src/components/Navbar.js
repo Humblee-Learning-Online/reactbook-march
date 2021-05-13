@@ -37,6 +37,14 @@ export const Navbar = (props) => {
                         </div>
                     </li>
                 </ul>
+                <ul className="navbar-nav m1-auto">
+                    <li className="nav-item">
+                        <button onClick={props.signIn} className="btn btn-link text-light">Login</button>
+                    </li>
+                    <li className="nav-item">
+                        <button onClick={props.signOut} className="btn btn-link text-light">Logout</button>
+                    </li>
+                </ul>
             </div>
         </nav>
     )

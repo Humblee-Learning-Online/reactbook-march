@@ -58,16 +58,23 @@ export const App = () => {
         // clear out current state of posts
         setPosts([]);
 
+        // connect to posts Collection
+        let postListRef = db.ref('posts');
+
+        // Get reference to current document trying to be created
+        let newPostRef = postListRef.push();
+        
         //  create the post structure
         var newPost = {
-            date: new Date(),
+            id: newPostRef.key, // pulling out the key attribute from newPostRef object
+            date: firebase.database.ServerValue.TIMESTAMP,
             body: e.target.body.value,
             author: 'Derek H'
         };
 
         // adds post to firebase database
-        db.ref('posts').push(newPost);
-
+        newPostRef.set(newPost)
+        
         //  reinitialize our state with new list of posts
         setPosts([...originalPosts, newPost]);
 
@@ -75,16 +82,32 @@ export const App = () => {
         e.target.body.value = '';
     }
 
+    const deletePost = (p) => {
+        // remove post from database
+        db.ref(`posts/${p.id}`).remove();
+
+        // re-render new list of posts
+        setPosts( [...posts.filter(post => post.id !== p.id)] )
+    }
+
+    const signIn = () => {
+        alert('Signed in!');
+    }
+
+    const signOut = () => {
+        alert('Signed out!');
+    }
+
     return (
         <div>
             <header>
-                <Navbar cart={[...cart]} />
+                <Navbar cart={[...cart]} signIn={signIn} signOut={signOut} />
                 {/* <Navbar delete={true} cart={ { total: Number(0).toFixed(2) } } /> */}
             </header>
 
             <main className="container">
                 <Switch>
-                    <Route exact path='/' render={() => <Home addPost={addPost} posts={posts} user={{...user, something: 'hello'}} />} />
+                    <Route exact path='/' render={() => <Home deletePost={deletePost} addPost={addPost} posts={posts} user={{...user, something: 'hello'}} />} />
                     <Route exact path='/products' render={() => <Products addToCart={addToCart} products={[...products]} />} />
                 </Switch>
             </main>
