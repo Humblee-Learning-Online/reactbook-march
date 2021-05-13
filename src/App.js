@@ -49,7 +49,7 @@ export const App = () => {
         setCart([...cart, productObj])
     };
 
-    const addPost = async (e) => {
+    const addPost = (e) => {
         e.preventDefault();
         
         // Keep track of original posts
@@ -68,12 +68,12 @@ export const App = () => {
             body: e.target.body.value,
             author: 'Derek H'
         };
-        (await newPostRef).set(newPost);
+        newPostRef.set(newPost);
         // adds post to firebase database
         // db.ref('posts').push(newPost);
 
         //  reinitialize our state with new list of posts
-        await setPosts([...originalPosts, newPost]);
+        setPosts([...originalPosts, newPost]);
 
         // cleara input form
         e.target.body.value = '';
