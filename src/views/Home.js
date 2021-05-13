@@ -3,6 +3,7 @@ import { Post } from '../components/Post';
 
 export const Home = (props) => {
     const user = props.user;
+    
 
     return (
         <React.Fragment>
@@ -22,7 +23,7 @@ export const Home = (props) => {
             </div>
 
             <ul className="list-group">
-                {props.posts.map(p => <Post p={p} />)}
+                {props.posts.map(p => <Post deletePost={props.deletePost} key={p.id} p={p} />)}
             </ul>
 
         </React.Fragment>
