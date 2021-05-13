@@ -1,9 +1,19 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext';
 
 export const Navbar = (props) => {
     const prices = props.cart.map(p => p.price);
     const subtotal = prices.reduce((sum, current) => sum + current, 0);
+
+    const { currentUser } = useAuth();
+    const handleLogin = () => {
+        props.signIn();
+    }
+
+    const handleLogout = () => {
+        props.signOut();
+    }
 
     return (
         <nav className="navbar navbar-expand-sm navbar-dark bg-dark">
@@ -38,12 +48,17 @@ export const Navbar = (props) => {
                     </li>
                 </ul>
                 <ul className="navbar-nav m1-auto">
-                    <li className="nav-item">
-                        <button onClick={props.signIn} className="btn btn-link text-light">Login</button>
-                    </li>
-                    <li className="nav-item">
-                        <button onClick={props.signOut} className="btn btn-link text-light">Logout</button>
-                    </li>
+                    {
+                        !currentUser
+                        ?
+                        <li className="nav-item">
+                            <Link onClick={ () => handleLogin() } to="" className="btn btn-link text-light">Login</Link>
+                        </li>
+                        :
+                        <li className="nav-item">
+                            <Link onClick={ () => handleLogout() } to="" className="btn btn-link text-light">Logout</Link>
+                        </li>
+                    }
                 </ul>
             </div>
         </nav>

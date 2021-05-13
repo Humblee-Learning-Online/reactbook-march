@@ -6,6 +6,7 @@ import { Navbar } from './components/Navbar';
 
 import './App.css';
 import firebase from './firebase';
+import { useAuth } from './contexts/AuthContext';
 
 
 export const App = () => {
@@ -13,6 +14,7 @@ export const App = () => {
     const [user, setUser] = useState({});
     const [cart, setCart] = useState([]);
     const [posts, setPosts] = useState([]);
+    const { signIn } = useAuth();
 
     const db = firebase.database();
 
@@ -26,6 +28,7 @@ export const App = () => {
 
     useEffect(() => {
         let newProducts = [];
+        console.log(db.ref('products'))
         db.ref('products').once('value', (snapshot) => {
             snapshot.forEach(child => {
                 newProducts.push(child.val())
@@ -65,28 +68,16 @@ export const App = () => {
         let newPostRef = postListRef.push();
         
         //  create the post structure
-        
-        let postListRef = db.ref('posts');
-        let newPostRef = postListRef.push();
         var newPost = {
-<<<<<<< HEAD
-            id: newPostRef.key,
-=======
             id: newPostRef.key, // pulling out the key attribute from newPostRef object
->>>>>>> thursday
             date: firebase.database.ServerValue.TIMESTAMP,
             body: e.target.body.value,
             author: 'Derek H'
         };
-        newPostRef.set(newPost);
+        // newPostRef.set(newPost);
         // adds post to firebase database
-<<<<<<< HEAD
-        // db.ref('posts').push(newPost);
-
-=======
         newPostRef.set(newPost)
         
->>>>>>> thursday
         //  reinitialize our state with new list of posts
         setPosts([...originalPosts, newPost]);
 
@@ -102,12 +93,14 @@ export const App = () => {
         setPosts( [...posts.filter(post => post.id !== p.id)] )
     }
 
-    const signIn = () => {
-        alert('Signed in!');
-    }
-
     const signOut = () => {
-        alert('Signed out!');
+        firebase.auth().signOut()
+            .then(() => {
+                console.log('User signed out.');
+            })
+            .catch(err => {
+                console.error(err);
+            })
     }
 
     return (
