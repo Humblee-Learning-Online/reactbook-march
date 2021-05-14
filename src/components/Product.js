@@ -16,7 +16,7 @@ export const Product = (props) => {
                     <img className="card-img-top" src="https://picsum.photos/500/500/?blur" alt={p.name} />
                 </div>
                 <div className="card-footer">
-                    <button onClick={(e) => this.props.addToCart(e, p)} className="btn btn-info btn-block">Add to cart</button>
+                    <button onClick={(e) => props.addToCart(e, p)} className="btn btn-info btn-block">Add to cart</button>
                 </div>
             </div>
         </div>

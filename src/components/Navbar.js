@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext';
 
 export const Navbar = (props) => {
-    const prices = props.cart.map(p => p.price);
-    const subtotal = prices.reduce((sum, current) => sum + current, 0);
 
     const { currentUser } = useAuth();
     const handleLogin = () => {
@@ -33,14 +31,14 @@ export const Navbar = (props) => {
                     <li className="nav-item dropdown">
                         <a className="nav-link dropdown-toggle" href="." id="dropdownId" data-toggle="dropdown" aria-expanded="false">
                             Shop
-                                <span style={{ marginLeft: '15px' }} className="badge badge-secondary">${subtotal.toFixed(2)}</span>
+                                <span style={{ marginLeft: '15px' }} className="badge badge-secondary">${props.cart.subtotal.toFixed(2)}</span>
                         </a>
                         <div className="dropdown-menu" aria-labelledby="dropdownId">
                             <Link className="dropdown-item" to="/products">Products</Link>
                             <a className="dropdown-item" href=".">
                                 <div>
                                     Cart
-                                        <span className="float-right badge badge-secondary">{props.cart.length}</span>
+                                        <span className="float-right badge badge-secondary">{props.cart.quantity}</span>
                                 </div>
                             </a>
                             <a className="dropdown-item" href=".">Checkout</a>

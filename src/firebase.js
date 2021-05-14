@@ -9,9 +9,9 @@ const firebaseConfig = {
     projectId: "fakebook-march",
     storageBucket: "fakebook-march.appspot.com",
     messagingSenderId: "421387606624",
-    appId: "1:421387606624:web:750b7f28fde4cb82204105",
-    measurementId: "G-HGQ58YHR7K"
-};
+    appId: "1:421387606624:web:a2624d7716855ed5204105",
+    measurementId: "G-92DVVCKVED"
+  };
 
 firebase.initializeApp(firebaseConfig);
 

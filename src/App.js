@@ -12,7 +12,7 @@ import { useAuth } from './contexts/AuthContext';
 export const App = () => {
     const [products, setProducts] = useState([]);
     const [user, setUser] = useState({});
-    const [cart, setCart] = useState([]);
+    const [cart, setCart] = useState({ items: {}, quantity: 0, subtotal: 0 });
     const [posts, setPosts] = useState([]);
     const { signIn } = useAuth();
 
@@ -28,7 +28,6 @@ export const App = () => {
 
     useEffect(() => {
         let newProducts = [];
-        console.log(db.ref('products'))
         db.ref('products').once('value', (snapshot) => {
             snapshot.forEach(child => {
                 newProducts.push(child.val())
@@ -48,8 +47,27 @@ export const App = () => {
     }, [db])
 
     const addToCart = (eventObj, productObj) => {
-        console.log(productObj);
-        setCart([...cart, productObj])
+        let newCart = {...cart}
+
+        if (!Object.keys(newCart.items).includes(productObj.name)) {
+            // create new newCart items
+            newCart.items[productObj.name] = {
+                info: productObj,
+                quantity: 1
+            }
+        }
+        else {
+            // find item and increase its quantity +1
+            newCart.items[productObj.name].quantity++;
+        }
+
+        // increment entire cart quantity
+        newCart.quantity ++;
+        
+        // update subtotal
+        newCart.subtotal += newCart.items[productObj.name].info.price;
+
+        setCart({...newCart})
     };
 
     const addPost = (e) => {
@@ -106,7 +124,7 @@ export const App = () => {
     return (
         <div>
             <header>
-                <Navbar cart={[...cart]} signIn={signIn} signOut={signOut} />
+                <Navbar cart={{ ...cart }} signIn={signIn} signOut={signOut} />
                 {/* <Navbar delete={true} cart={ { total: Number(0).toFixed(2) } } /> */}
             </header>
 
