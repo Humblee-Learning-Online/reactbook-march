@@ -2,22 +2,30 @@
     "products" : [
         {
             "id": 1,
+            "image": "https://firebasestorage.googleapis.com/v0/b/fakebook-march.appspot.com/o/mango.jpeg?alt=media&token=6394ce56-07c4-441d-9d0f-b001c4aff2a1",
             "name": "mango",
+            "tax": 0.11,
             "price": 1.99
         },
         {
             "id": 2,
+            "image": "https://firebasestorage.googleapis.com/v0/b/fakebook-march.appspot.com/o/pear.jpg?alt=media&token=c9c56b2d-c479-46ec-917a-981e9ecc1d07",
             "name": "pear",
+            "tax": 0.01,
             "price": 0.59
         },
         {
             "id": 3,
+            "image": "https://firebasestorage.googleapis.com/v0/b/fakebook-march.appspot.com/o/watermelon.jpg?alt=media&token=d56edda7-1193-48d1-b7f9-17eb4ea8a167",
             "name": "watermelon",
+            "tax": 0.35,
             "price": 5.99
         },
         {
             "id": 4,
+            "image": "https://firebasestorage.googleapis.com/v0/b/fakebook-march.appspot.com/o/apricot.jpg?alt=media&token=345c07ef-5476-479f-a5cb-22bf136869c1",
             "name": "apricot",
+            "tax": 0.15,
             "price": 2.58
         }
     ]

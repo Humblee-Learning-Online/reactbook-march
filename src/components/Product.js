@@ -13,7 +13,7 @@ export const Product = (props) => {
                     </h6>
                 </div>
                 <div className="card-body">
-                    <img className="card-img-top" src="https://picsum.photos/500/500/?blur" alt={p.name} />
+                    <img className="card-img-top" src={p.image} alt={p.name} />
                 </div>
                 <div className="card-footer">
                     <button onClick={(e) => props.addToCart(e, p)} className="btn btn-info btn-block">Add to cart</button>

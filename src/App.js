@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Route, Switch } from 'react-router';
 import { Home } from './views/Home';
 import { Products } from './views/Products';
@@ -7,47 +7,38 @@ import { Navbar } from './components/Navbar';
 import './App.css';
 import firebase from './firebase';
 import { useAuth } from './contexts/AuthContext';
+import { Cart } from './components/Cart';
+import { DataContext } from './contexts/DataProvider';
+
+
 
 
 export const App = () => {
-    const [products, setProducts] = useState([]);
-    const [user, setUser] = useState({});
-    const [cart, setCart] = useState({ items: {}, quantity: 0, subtotal: 0 });
-    const [posts, setPosts] = useState([]);
-    const { signIn } = useAuth();
+    const { cartList } = useContext(DataContext);
+    const { postList } = useContext(DataContext);
+    const { grabPosts } = useContext(DataContext);
+
+    const [cart, setCart] = cartList;
+    const [posts, setPosts] = postList;
+    const getPosts = grabPosts;
+    const { currentUser } = useAuth();
 
     const db = firebase.database();
 
-    useEffect(() => {
-        setUser({
-            name: 'Derek Hawkins',
-            age: 33,
-            location: 'Dallas'
-        });
-    }, []);
 
     useEffect(() => {
-        let newProducts = [];
-        db.ref('products').once('value', (snapshot) => {
-            snapshot.forEach(child => {
-                newProducts.push(child.val())
+        if (currentUser.loggedIn) {
+            db.ref(`cart/${currentUser.user.id}`).once('value', (snapshot) => {
+                if (!snapshot.exists()) {
+                    db.ref(`cart/${currentUser.user.id}`).set({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 })
+                    setCart({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 })
+                }
             })
-            setProducts(newProducts);
-        })
-    }, [db]);
-    
-    useEffect(() => {
-        let newPosts = [];
-        db.ref('posts').once('value', (snapshot) => {
-            snapshot.forEach(child => {
-                newPosts.push(child.val())
-            })
-            setPosts(newPosts);
-        })
-    }, [db])
+        }
+    }, [currentUser, setCart, db])
 
     const addToCart = (eventObj, productObj) => {
-        let newCart = {...cart}
+        let newCart = {...cart, items: {}}
 
         if (!Object.keys(newCart.items).includes(productObj.name)) {
             // create new newCart items
@@ -66,38 +57,53 @@ export const App = () => {
         
         // update subtotal
         newCart.subtotal += newCart.items[productObj.name].info.price;
+        newCart.tax += newCart.items[productObj.name].info.tax;
+        newCart.grandtotal = newCart.subtotal + newCart.tax;
 
-        setCart({...newCart})
+        
+        // update cart in database
+        let cartListRef = db.ref(`cart/${currentUser.user.id}`);
+        var newCartItem = {
+            ...newCart,
+        }
+        cartListRef.set(newCartItem);
+        
+        // set cart from database
+        // cartListRef.once('value', snapshot => {
+        //     console.log(snapshot[0])
+        // })
+        // .orderByChild(`items/${productObj.name}`)
+        db.ref(`cart/${currentUser.user.id}`).on('value', snapshot => {
+            setCart({ ...snapshot.val() });
+        })
     };
+
 
     const addPost = (e) => {
         e.preventDefault();
         
-        // Keep track of original posts
-        let originalPosts = posts;
-
         // clear out current state of posts
         setPosts([]);
 
         // connect to posts Collection
-        let postListRef = db.ref('posts');
+        let postListRef = db.ref(`posts/${currentUser.user.id}`);
 
         // Get reference to current document trying to be created
-        let newPostRef = postListRef.push();
         
         //  create the post structure
         var newPost = {
-            id: newPostRef.key, // pulling out the key attribute from newPostRef object
             date: firebase.database.ServerValue.TIMESTAMP,
             body: e.target.body.value,
-            author: 'Derek H'
+            author: currentUser.user.name
         };
+
+        postListRef.push(newPost);
         // newPostRef.set(newPost);
         // adds post to firebase database
-        newPostRef.set(newPost)
+        // newPostRef.set(newPost)
         
         //  reinitialize our state with new list of posts
-        setPosts([...originalPosts, newPost]);
+        getPosts();
 
         // cleara input form
         e.target.body.value = '';
@@ -124,14 +130,14 @@ export const App = () => {
     return (
         <div>
             <header>
-                <Navbar cart={{ ...cart }} signIn={signIn} signOut={signOut} />
-                {/* <Navbar delete={true} cart={ { total: Number(0).toFixed(2) } } /> */}
+                <Navbar signOut={signOut} />
             </header>
 
             <main className="container">
                 <Switch>
-                    <Route exact path='/' render={() => <Home deletePost={deletePost} addPost={addPost} posts={posts} user={{...user, something: 'hello'}} />} />
-                    <Route exact path='/products' render={() => <Products addToCart={addToCart} products={[...products]} />} />
+                    <Route exact path='/' render={() => <Home currentUser={currentUser} deletePost={deletePost} addPost={addPost} />} />
+                    <Route exact path='/shop/products' render={() => <Products addToCart={addToCart} />} />
+                    <Route exact path='/shop/cart' render={() => <Cart cart={{ ...cart }} /> } />
                 </Switch>
             </main>
 

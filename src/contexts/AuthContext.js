@@ -8,7 +8,7 @@ export function useAuth() {
 }
 
 export const AuthProvider = ( { children } ) => {
-    const [currentUser, setCurrentUser] = useState();
+    const [currentUser, setCurrentUser] = useState({ loggedIn: false, hasItems: false });
     const auth = new firebase.auth.GoogleAuthProvider();
 
     function signIn() {
@@ -23,7 +23,20 @@ export const AuthProvider = ( { children } ) => {
 
     useEffect(() => {
         const unsubscribe = firebase.auth().onAuthStateChanged(user => {
-            setCurrentUser(user);
+            if (user) {
+                setCurrentUser(
+                    {
+                        user: {
+                            id: user.uid,
+                            name: user.displayName,
+                            email: user.email
+                        },
+                        loggedIn: true 
+                    }
+                );
+            } else {
+                setCurrentUser({ loggedIn: false });
+            }
         });
         return unsubscribe;
     }, []);
