@@ -53,9 +53,9 @@ export const DataProvider = (props) => {
     }, [db]);
 
     // Get Posts
-    async function getPosts() {
+    const getPosts = () => {
         let newPosts = [];
-        await db.ref(`posts/${currentUser.user.id}`).once('value', (snapshot) => {
+        db.ref(`posts/${currentUser.user.id}`).once('value', (snapshot) => {
             snapshot.forEach(child => {
                 newPosts.push({ id: child.key, ...child.val() })
             })
@@ -67,7 +67,7 @@ export const DataProvider = (props) => {
         if (currentUser.loggedIn) {
             getPosts();
         }
-    }, [currentUser.loggedIn, db])
+    })
 
     return (
         <DataContext.Provider value={{ cartClear: clearCart, grabPosts: getPosts, productList: [products, setProducts], postList: [posts, setPosts], cartList: [cart, setCart] } }>
