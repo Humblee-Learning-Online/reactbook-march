@@ -29,7 +29,8 @@ export const Cart = (props) => {
         .then(res => res.json())
         .then(data => {
             // with sessionId
-            stripe.redirectToCheckout({ sessionId: data.session_id });
+            const redirect = async () => await stripe.redirectToCheckout({ sessionId: data.session_id });
+            redirect();
             clearCart();
             setCart({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 });
         })
