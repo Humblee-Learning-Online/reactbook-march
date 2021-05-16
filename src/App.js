@@ -11,16 +11,16 @@ import { Cart } from './components/Cart';
 import { DataContext } from './contexts/DataProvider';
 
 
-
-
 export const App = () => {
     const { cartList } = useContext(DataContext);
     const { postList } = useContext(DataContext);
     const { grabPosts } = useContext(DataContext);
+    const { cartClear } = useContext(DataContext);
 
     const [cart, setCart] = cartList;
     const [posts, setPosts] = postList;
     const getPosts = grabPosts;
+    const clearCart = cartClear;
     const { currentUser } = useAuth();
 
     const db = firebase.database();
@@ -30,12 +30,12 @@ export const App = () => {
         if (currentUser.loggedIn) {
             db.ref(`cart/${currentUser.user.id}`).once('value', (snapshot) => {
                 if (!snapshot.exists()) {
-                    db.ref(`cart/${currentUser.user.id}`).set({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 })
+                    clearCart()
                     setCart({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 })
                 }
             })
         }
-    }, [currentUser, setCart, db])
+    }, [currentUser, setCart, db, clearCart])
 
     const addToCart = (eventObj, productObj) => {
         let newCart;

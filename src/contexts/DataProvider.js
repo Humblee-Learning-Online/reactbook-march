@@ -12,6 +12,10 @@ export const DataProvider = (props) => {
 
     const db = firebase.database();
 
+    const clearCart = () => {
+        db.ref(`cart/${currentUser.user.id}`).set({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 })
+    }
+
     // Get Cart
     useEffect(() => {
         
@@ -66,7 +70,7 @@ export const DataProvider = (props) => {
     }, [currentUser.loggedIn, db])
 
     return (
-        <DataContext.Provider value={{ grabPosts: getPosts, productList: [products, setProducts], postList: [posts, setPosts], cartList: [cart, setCart] } }>
+        <DataContext.Provider value={{ cartClear: clearCart, grabPosts: getPosts, productList: [products, setProducts], postList: [posts, setPosts], cartList: [cart, setCart] } }>
             { props.children }
         </DataContext.Provider>
     )
