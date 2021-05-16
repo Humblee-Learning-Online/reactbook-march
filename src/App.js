@@ -38,7 +38,13 @@ export const App = () => {
     }, [currentUser, setCart, db])
 
     const addToCart = (eventObj, productObj) => {
-        let newCart = {...cart, items: {}}
+        let newCart;
+        if (!cart.hasOwnProperty('items')) {
+            newCart = {...cart, items: {} }
+        }
+        else {
+            newCart = {...cart }
+        }
 
         if (!Object.keys(newCart.items).includes(productObj.name)) {
             // create new newCart items
