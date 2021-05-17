@@ -15,7 +15,7 @@ export const Cart = (props) => {
     const handleCheckout = async (e) => {
         e.preventDefault();
         
-        const stripePromise = loadStripe("pk_test_51HQDVkBAC7MChR4eGnboooNdN9FPPSNun8qBxyaG8Na6GSC8XnR7QrxNjOjm9D6MT8my6wsmkGgrHcspdsnZ8YpF00Ljptt61D");
+        const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
         const stripe = await stripePromise;   
         
         await fetch('/shop/react/checkout', {
@@ -27,15 +27,16 @@ export const Cart = (props) => {
             body: JSON.stringify( {...cart} )
         })
         .then(res => res.json())
-        .then(data => {
+        .then(async data => {
             // with sessionId
-            const redirect = async () => await stripe.redirectToCheckout({ sessionId: data.session_id });
-            redirect();
+            await stripe.redirectToCheckout({ sessionId: data.session_id });
+
             clearCart();
             setCart({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 });
+            // setCart({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 });
         })
         .catch(err => console.error(err))
-
+        
     }
 
     if (!currentUser.loggedIn) {
