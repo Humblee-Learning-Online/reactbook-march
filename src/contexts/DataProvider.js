@@ -13,7 +13,9 @@ export const DataProvider = (props) => {
     const db = firebase.database();
 
     const clearCart = () => {
-        db.ref(`cart/${currentUser.user.id}`).set({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 })
+        let cartReset = { items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 };
+        setCart(cartReset)
+        db.ref(`cart/${ currentUser.user.id }`).set(cartReset)
     }
 
     // Get Cart
@@ -43,14 +45,32 @@ export const DataProvider = (props) => {
     // Get Products
     useEffect(() => {
         let newProducts = [];
-        db.ref('products').once('value', (snapshot) => {
-            snapshot.forEach(child => {
-                // console.log(child.val())
-                newProducts.push(child.val())
+        
+        fetch('/api/products')
+            .then(res => res.json())
+            .then(data => {
+                // console.log(data)
+                for (const p of data) {
+                    newProducts.push({
+                        id: p.id,
+                        image: p.image,
+                        name: p.name,
+                        price: p.price,
+                        tax: p.tax
+                    })
+                }
+                setProducts(newProducts);
             })
-            setProducts(newProducts);
-        })
-    }, [db]);
+            .catch(err => console.log(err))
+
+        // db.ref('products').once('value', (snapshot) => {
+        //     snapshot.forEach(child => {
+        //         // console.log(child.val())
+        //         newProducts.push(child.val())
+        //     })
+        //     setProducts(newProducts);
+        // })
+    }, []);
 
     // Get Posts
     const getPosts = () => {

@@ -31,9 +31,7 @@ export const Cart = (props) => {
             // with sessionId
             await stripe.redirectToCheckout({ sessionId: data.session_id });
 
-            clearCart();
-            setCart({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 });
-            // setCart({ items: {}, quantity: 0, tax: 0, subtotal: 0, grandtotal: 0 });
+            await clearCart();
         })
         .catch(err => console.error(err))
         
